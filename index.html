@@ -2,39 +2,209 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>UMER SIM DATABASE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>UMER SIMS APP</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:'Poppins',sans-serif;
--webkit-tap-highlight-color:transparent;
+font-family:Poppins;
 }
 
 body{
-background:
-linear-gradient(135deg,#020617,#0f172a,#111827);
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
+background:#0b0f1a;
+color:#fff;
+height:100vh;
 overflow:hidden;
-padding:10px;
-color:white;
 }
 
-/* Animated Background */
+/* APP FRAME (mobile only) */
+.app{
+width:100%;
+max-width:420px;
+height:100vh;
+margin:auto;
+background:#11182a;
+display:flex;
+flex-direction:column;
+}
 
-.bg1,
-.bg2,
-.bg3{
-position:absolute;
+/* TOP BAR */
+.topbar{
+padding:12px;
+background:#0f172a;
+text-align:center;
+font-weight:600;
+color:#00ffcc;
+}
+
+/* PAGES */
+.page{
+flex:1;
+display:none;
+padding:15px;
+overflow:auto;
+}
+
+.active{
+display:block;
+}
+
+/* BUTTONS */
+.btn{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#00ffcc;
+font-weight:600;
+margin-top:10px;
+}
+
+.input{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+margin-top:10px;
+background:#1e293b;
+color:#fff;
+outline:none;
+}
+
+/* CARD */
+.card{
+background:#0f172a;
+padding:12px;
+border-radius:10px;
+margin-top:10px;
+white-space:pre-wrap;
+font-size:12px;
+}
+
+/* NAV */
+.nav{
+display:flex;
+justify-content:space-around;
+background:#0f172a;
+padding:10px;
+}
+
+.nav button{
+background:none;
+border:none;
+color:#fff;
+font-size:12px;
+}
+
+/* RESULT PAGE BUTTON */
+.bottom-btn{
+position:sticky;
+bottom:0;
+width:100%;
+margin-top:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="topbar">UMER SIMS DATABASE</div>
+
+<!-- DASHBOARD -->
+<div class="page active" id="home">
+<h3>Dashboard</h3>
+
+<button class="btn" onclick="openPage('search')">🔎 Search SIM</button>
+
+</div>
+
+<!-- SEARCH PAGE -->
+<div class="page" id="search">
+<h3>Search Number</h3>
+
+<input class="input" id="number" placeholder="Enter number e.g 03XXXXXXXXX">
+
+<button class="btn" onclick="searchSIM()">Search</button>
+
+<div id="loader" style="display:none;margin-top:10px;">Searching...</div>
+
+</div>
+
+<!-- RESULT PAGE -->
+<div class="page" id="resultPage">
+
+<h3>Result</h3>
+
+<div class="card" id="resultBox"></div>
+
+<button class="btn bottom-btn" onclick="openPage('search')">
+🔁 Check New Number
+</button>
+
+</div>
+
+<!-- NAV -->
+<div class="nav">
+<button onclick="openPage('home')">Home</button>
+<button onclick="openPage('search')">Search</button>
+<button onclick="openPage('resultPage')">Result</button>
+</div>
+
+</div>
+
+<script>
+
+let lastData = "";
+
+/* PAGE SWITCH */
+function openPage(page){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(page).classList.add("active");
+}
+
+/* SEARCH API */
+async function searchSIM(){
+
+let num = document.getElementById("number").value;
+let loader = document.getElementById("loader");
+
+if(!num){
+alert("Enter number");
+return;
+}
+
+loader.style.display="block";
+
+try{
+let res = await fetch("https://sim-info-api.wasif-ali.workers.dev/?search="+num);
+let data = await res.json();
+
+loader.style.display="none";
+
+lastData = JSON.stringify(data, null, 2);
+
+document.getElementById("resultBox").innerText = lastData;
+
+/* AUTO OPEN RESULT PAGE */
+openPage("resultPage");
+
+}catch(e){
+loader.style.display="none";
+alert("Error fetching data");
+}
+}
+
+</script>
+
+</body>
+</html>position:absolute;
 border-radius:50%;
 filter:blur(90px);
 opacity:0.25;
